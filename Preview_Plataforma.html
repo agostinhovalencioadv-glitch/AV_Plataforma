@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --preto:#110D0C; --dourado:#C7A77F; --dourado-esc:#8A6E4B; --dourado-clr:#E8DAC4;
+    --areia:#F7F3EC; --cinza:#6B6259; --linha:#E2DCD1; --verde:#1E7B4F; --vermelho:#A32020;
+    --ambar:#B8860B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',Arial,sans-serif;background:var(--areia);color:#1A1A1A;font-size:14px}
+  #app{display:flex;min-height:100vh}
+  /* ---------- SIDEBAR ---------- */
+  aside{width:238px;background:var(--preto);color:var(--dourado-clr);flex-shrink:0;
+        display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .logo{padding:26px 20px 18px;border-bottom:1px solid #2A2320}
+  .logo .mark{font-family:'Cormorant Garamond',Georgia,serif;font-size:30px;color:var(--dourado);
+               letter-spacing:2px;line-height:1}
+  .logo .sub{font-family:'Cormorant Garamond',Georgia,serif;font-size:13px;color:var(--dourado-clr);
+             letter-spacing:5px;margin-top:4px;opacity:.85}
+  nav{padding:14px 10px;overflow-y:auto;flex:1}
+  nav button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;
+             color:#CFC6B8;font:500 13px 'Inter',Arial;padding:11px 14px;border-radius:8px;
+             cursor:pointer;text-align:left;transition:.15s}
+  nav button:hover{background:#211A16;color:#fff}
+  nav button.on{background:var(--dourado);color:var(--preto);font-weight:600}
+  nav .grp{font-size:10px;letter-spacing:1.6px;color:#6E635A;padding:16px 14px 6px;font-weight:600}
+  aside .pe{padding:12px 16px;border-top:1px solid #2A2320;font-size:11px;color:#7A6F65}
+  aside .pe a{color:var(--dourado);text-decoration:none}
+  /* ---------- CONTEÚDO ---------- */
+  main{flex:1;min-width:0;padding:22px 28px 60px}
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;
+             border-bottom:1px solid var(--linha);padding-bottom:14px;margin-bottom:22px;flex-wrap:wrap}
+  header.top h1{font-family:'Cormorant Garamond',Georgia,serif;font-size:27px;font-weight:600;color:var(--preto)}
+  header.top p{color:var(--cinza);font-size:12.5px;margin-top:3px}
+  .periodo{display:flex;gap:8px;align-items:center}
+  select,input,textarea{font:400 13px 'Inter',Arial;border:1px solid var(--linha);border-radius:7px;
+         padding:8px 10px;background:#fff;color:#1A1A1A}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--dourado-clr);border-color:var(--dourado)}
+  .btn{background:var(--preto);color:var(--dourado);border:0;border-radius:7px;padding:9px 16px;
+       font:600 13px 'Inter',Arial;cursor:pointer}
+  .btn:hover{background:#2A211C}
+  .btn.gold{background:var(--dourado);color:var(--preto)}
+  .btn.ghost{background:#fff;color:var(--preto);border:1px solid var(--linha)}
+  .btn.sm{padding:5px 10px;font-size:12px;border-radius:6px}
+  .btn.del{background:#fff;color:var(--vermelho);border:1px solid #E8CFCF}
+  /* ---------- CARDS ---------- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:12px}
+  .card{background:#fff;border:1px solid var(--linha);border-radius:11px;padding:14px 16px;
+        border-bottom:3px solid var(--dourado)}
+  .card .lb{font-size:10.5px;letter-spacing:.6px;color:var(--cinza);font-weight:600;text-transform:uppercase}
+  .card .vl{font-size:22px;font-weight:700;color:var(--preto);margin-top:6px;font-variant-numeric:tabular-nums}
+  .card.alerta{border-bottom-color:var(--vermelho)}
+  .card.alerta .vl{color:var(--vermelho)}
+  h2.sec{font-family:'Cormorant Garamond',Georgia,serif;font-size:20px;font-weight:600;
+         margin:30px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--linha);color:var(--preto)}
+  /* ---------- TABELAS ---------- */
+  .box{background:#fff;border:1px solid var(--linha);border-radius:11px;overflow:hidden}
+  .box .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+            padding:12px 14px;border-bottom:1px solid var(--linha);flex-wrap:wrap}
+  .box .bar strong{font-size:13px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{background:var(--preto);color:var(--dourado-clr);font-weight:600;font-size:10.5px;
+     letter-spacing:.5px;text-transform:uppercase;padding:9px 10px;text-align:left;white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid #F0ECE4;vertical-align:top}
+  tbody tr:hover{background:#FBF8F2}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:600}
+  .tag.v{background:#F8D7DA;color:#7A1620}.tag.a{background:#FDF3D2;color:#7A5B00}
+  .tag.o{background:#D9EFE2;color:#14603C}.tag.n{background:#EDEAE4;color:#5A5148}
+  .scroll{overflow-x:auto;max-height:66vh}
+  /* ---------- FORM / MODAL ---------- */
+  .mask{position:fixed;inset:0;background:rgba(17,13,12,.55);display:flex;align-items:flex-start;
+        justify-content:center;padding:40px 16px;z-index:50;overflow-y:auto}
+  .modal{background:#fff;border-radius:13px;width:100%;max-width:720px;overflow:hidden}
+  .modal .mh{background:var(--preto);color:var(--dourado);padding:15px 20px;display:flex;
+             justify-content:space-between;align-items:center}
+  .modal .mh h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:19px;font-weight:600}
+  .modal .mb{padding:18px 20px;display:grid;grid-template-columns:1fr 1fr;gap:13px}
+  .modal .mf{padding:14px 20px;border-top:1px solid var(--linha);display:flex;gap:9px;justify-content:flex-end}
+  .fld{display:flex;flex-direction:column;gap:5px}
+  .fld.full{grid-column:1/-1}
+  .fld label{font-size:11px;font-weight:600;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px}
+  .fld .req{color:var(--vermelho)}
+  .x{background:none;border:0;color:var(--dourado);font-size:22px;cursor:pointer;line-height:1}
+  /* ---------- DIVERSOS ---------- */
+  .aviso{background:#fff;border:1px solid var(--linha);border-left:3px solid var(--dourado);
+         border-radius:9px;padding:12px 14px;font-size:12.5px;color:#40382F}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px}
+  .barra{display:flex;align-items:flex-end;gap:5px;height:150px;padding:12px 14px}
+  .barra .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;height:100%}
+  .barra .b{border-radius:3px 3px 0 0;min-height:1px}
+  .barra .b.r{background:var(--dourado)}.barra .b.d{background:var(--preto)}
+  .barra .m{font-size:9.5px;color:var(--cinza);text-align:center;padding-top:4px}
+  .leg{display:flex;gap:14px;font-size:11px;color:var(--cinza);padding:0 14px 12px}
+  .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+  #toast{position:fixed;right:18px;bottom:18px;background:var(--preto);color:var(--dourado-clr);
+         padding:13px 18px;border-radius:9px;font-size:13px;display:none;z-index:99;max-width:340px;
+         border-left:3px solid var(--dourado)}
+  .load{padding:40px;text-align:center;color:var(--cinza);font-size:13px}
+  .vazio{padding:34px;text-align:center;color:var(--cinza);font-size:13px}
+  @media(max-width:820px){
+    #app{flex-direction:column} aside{width:100%;height:auto;position:relative}
+    nav{display:flex;flex-wrap:wrap;gap:4px} nav .grp{display:none} main{padding:16px}
+    .modal .mb{grid-template-columns:1fr}
+  }
+
+  .hora{font-size:11px;color:var(--cinza);margin-top:4px}
+  .btn.ref{border-color:var(--dourado);color:var(--dourado-esc);background:#fff}
+  .btn.ref:hover{background:var(--areia)}
+  .secbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .cfgwrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .cfgwrap .box{margin:0}
+  .cap{font-size:11px;color:var(--cinza);padding:8px 14px;border-top:1px solid var(--linha)}
+  .params{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;padding:14px}
+  .params .fld label{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--cinza);margin-bottom:5px}
+  .params .fld input,.params .fld select{width:100%}
+
+  .filtros{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px 14px;
+    background:var(--areia);border-bottom:1px solid var(--linha)}
+  .filtros select,.filtros input{font-size:12px}
+  .fdica{font-size:11px;color:var(--cinza);margin-left:auto;max-width:280px;line-height:1.4}
+  .ficha .fh{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--cinza);margin-bottom:8px}
+  .ficha table th{background:var(--areia);color:var(--dourado-esc);font-size:12px}
+  .btn.sm{padding:5px 9px;font-size:11px}
+</style>
+</head>
+<body><div style="background:#8A6E4B;color:#fff;font:600 12px Inter,Arial;padding:8px 14px;text-align:center">
+MODO DEMONSTRAÇÃO — interface com dados de EXEMPLO. Depois de publicar no Google Drive, a plataforma passa a ler e gravar na planilha real.</div>
+<script>
+/* ==== MODO DEMONSTRAÇÃO — dados fictícios marcados como EXEMPLO ==== */
+const DEMO_LISTAS={
+ tipos:['Receita','Despesa'],
+ categorias:['Honorários contratuais','Honorários de êxito','Honorários de sucumbência','Consultoria','Aluguel','Salários','Custas processuais','Sistemas jurídicos','Tráfego pago'],
+ catDespesa:['Aluguel','Salários','Custas processuais','Sistemas jurídicos','Tráfego pago'],
+ subcategorias:['Mensal','Parcelado','Eventual','Contrato','Processo'],
+ formas:['PIX','Transferência/TED','Boleto','Cartão de crédito','Dinheiro'],
+ contas:['EXEMPLO - Conta Corrente PJ'],
+ centros:['Administrativo','Cível','Trabalhista','Previdenciário','Consultivo'],
+ socios:['Marcos','Joice'], advogados:['Marcos','Joice'],
+ tipoHonorario:['Honorários contratuais','Honorários de êxito','Honorários de sucumbência','Consultoria'],
+ statusCliente:['Ativo','Inativo','Prospect','Inadimplente'],
+ statusProcesso:['Em andamento','Suspenso','Em recurso','Em execução','Encerrado com êxito'],
+ fases:['Petição inicial','Instrução','Sentença','Recursal','Execução'],
+ simnao:['Sim','Não'],
+ tiposRetirada:['Pró-labore','Distribuição de lucros','Adiantamento','Reembolso','Outras retiradas'],
+ clientes:['EXEMPLO - Construtora Vale Ltda','EXEMPLO - Maria S. Pereira','EXEMPLO - Transportes MG S.A.'],
+ processos:['EXEMPLO 5001234-56.2026.8.13.0451','EXEMPLO 5009876-11.2026.5.03.0102'],
+ ano:2026, mes:1, escritorio:'AV ADVOCACIA'
+};
+const DEMO_MAPA={
+ lancamentos:{aba:'LANÇAMENTOS',campos:[
+  {col:'B',key:'competencia',label:'Data de competência',tipo:'data',obrig:true},
+  {col:'C',key:'vencimento',label:'Data de vencimento',tipo:'data'},
+  {col:'D',key:'pagamento',label:'Data de pagamento',tipo:'data'},
+  {col:'E',key:'tipo',label:'Tipo',tipo:'lista',lista:'tipos',obrig:true},
+  {col:'F',key:'categoria',label:'Categoria',tipo:'lista',lista:'categorias',obrig:true},
+  {col:'H',key:'descricao',label:'Descrição',tipo:'texto',obrig:true},
+  {col:'I',key:'cliente',label:'Cliente',tipo:'lista',lista:'clientes'},
+  {col:'J',key:'processo',label:'Processo',tipo:'lista',lista:'processos'},
+  {col:'K',key:'centro',label:'Centro de custo',tipo:'lista',lista:'centros'},
+  {col:'M',key:'forma',label:'Forma de pagamento',tipo:'lista',lista:'formas'},
+  {col:'N',key:'previsto',label:'Valor previsto',tipo:'numero'},
+  {col:'O',key:'realizado',label:'Valor realizado',tipo:'numero'},
+  {col:'W',key:'obs',label:'Observações',tipo:'texto'}]},
+ clientes:{aba:'CLIENTES',campos:[
+  {col:'B',key:'nome',label:'Nome / Razão Social',tipo:'texto',obrig:true},
+  {col:'C',key:'doc',label:'CPF/CNPJ',tipo:'texto'},
+  {col:'D',key:'tel',label:'Telefone',tipo:'texto'},
+  {col:'E',key:'email',label:'E-mail',tipo:'texto'},
+  {col:'M',key:'status',label:'Status do cliente',tipo:'lista',lista:'statusCliente'}]},
+ processos:{aba:'PROCESSOS',campos:[
+  {col:'A',key:'numero',label:'Número do processo',tipo:'texto',obrig:true},
+  {col:'B',key:'cliente',label:'Cliente',tipo:'lista',lista:'clientes',obrig:true},
+  {col:'C',key:'contraria',label:'Parte contrária',tipo:'texto'},
+  {col:'E',key:'advogado',label:'Advogado responsável',tipo:'lista',lista:'advogados'},
+  {col:'P',key:'status',label:'Status do processo',tipo:'lista',lista:'statusProcesso'},
+  {col:'Q',key:'fase',label:'Fase atual',tipo:'lista',lista:'fases'},
+  {col:'R',key:'compromisso',label:'Próximo compromisso',tipo:'texto'},
+  {col:'S',key:'prazo',label:'Data do próximo prazo',tipo:'data'},
+  {col:'U',key:'advContraria',label:'Advogado da parte contrária',tipo:'texto'},
+  {col:'V',key:'contatoContraria',label:'Contato do adv. contrário (tel./e-mail)',tipo:'texto'},
+  {col:'W',key:'obs',label:'Observações',tipo:'texto'}]},
+ receber:{aba:'CONTAS A RECEBER',campos:[
+  {col:'A',key:'cliente',label:'Cliente',tipo:'lista',lista:'clientes',obrig:true},
+  {col:'B',key:'processo',label:'Processo',tipo:'lista',lista:'processos'},
+  {col:'C',key:'parcela',label:'Parcela',tipo:'texto'},
+  {col:'D',key:'vencimento',label:'Vencimento',tipo:'data',obrig:true},
+  {col:'E',key:'valor',label:'Valor',tipo:'numero',obrig:true},
+  {col:'F',key:'recebimento',label:'Data do recebimento',tipo:'data'},
+  {col:'G',key:'recebido',label:'Valor recebido',tipo:'numero'}]},
+ pagar:{aba:'CONTAS A PAGAR',campos:[
+  {col:'A',key:'fornecedor',label:'Fornecedor',tipo:'texto',obrig:true},
+  {col:'B',key:'categoria',label:'Categoria',tipo:'lista',lista:'catDespesa',obrig:true},
+  {col:'C',key:'descricao',label:'Descrição',tipo:'texto'},
+  {col:'E',key:'vencimento',label:'Vencimento',tipo:'data',obrig:true},
+  {col:'F',key:'valor',label:'Valor',tipo:'numero',obrig:true},
+  {col:'G',key:'pagamento',label:'Data de pagamento',tipo:'data'},
+  {col:'H',key:'pago',label:'Valor pago',tipo:'numero'}]},
+ honorarios:{aba:'RECEITAS-HONORÁRIOS',campos:[
+  {col:'A',key:'cliente',label:'Cliente',tipo:'lista',lista:'clientes',obrig:true},
+  {col:'C',key:'processo',label:'Processo',tipo:'lista',lista:'processos'},
+  {col:'D',key:'tipo',label:'Tipo de honorário',tipo:'lista',lista:'tipoHonorario',obrig:true},
+  {col:'E',key:'valor',label:'Valor contratado',tipo:'numero',obrig:true},
+  {col:'F',key:'parcelas',label:'Nº de parcelas',tipo:'numero'}]},
+ retiradas:{aba:'PRÓ-LABORE E DISTRIBUIÇÃO',campos:[
+  {col:'A',key:'data',label:'Data',tipo:'data',obrig:true},
+  {col:'B',key:'socio',label:'Sócio',tipo:'lista',lista:'socios',obrig:true},
+  {col:'C',key:'tipo',label:'Tipo de retirada',tipo:'lista',lista:'tiposRetirada',obrig:true},
+  {col:'D',key:'descricao',label:'Descrição',tipo:'texto'},
+  {col:'E',key:'valor',label:'Valor',tipo:'numero',obrig:true},
+  {col:'F',key:'forma',label:'Forma de pagamento',tipo:'lista',lista:'formas'}]}
+};
+DEMO_LISTAS.mapa=DEMO_MAPA;
+DEMO_LISTAS.parametros=[
+ {cel:'B5',key:'escritorio',label:'Nome do escritório',tipo:'texto'},
+ {cel:'B8',key:'meta',label:'Meta de faturamento mensal (R$)',tipo:'numero'},
+ {cel:'B9',key:'alerta',label:'Alerta de vencimento (dias de antecedência)',tipo:'numero'},
+ {cel:'B11',key:'regime',label:'Regime de análise padrão',tipo:'lista',opcoes:['Competência','Caixa']}];
+const DEMO_CFG={
+ parametros:{escritorio:'AV ADVOCACIA',meta:20000,alerta:7,regime:'Competência',ano:2026,mes:1},
+ blocos:[
+  {chave:'catReceita',label:'Categorias de receita',nota:'Alimentam Lançamentos, DRE e o relatório de receitas.',capacidade:20,usadas:4,livres:16,
+   campos:[{col:'A',key:'nome',label:'Categoria',tipo:'texto',obrig:true},{col:'C',key:'grupo',label:'Grupo (ex.: Honorários, Outras receitas)',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Honorários contratuais',grupo:'Honorários'}},{row:16,vals:{nome:'Honorários de êxito',grupo:'Honorários'}},
+          {row:17,vals:{nome:'Honorários de sucumbência',grupo:'Honorários'}},{row:18,vals:{nome:'Consultoria',grupo:'Consultivo'}}]},
+  {chave:'catDespesa',label:'Categorias de despesa',nota:'Cada categoria vira uma linha da aba DESPESAS e do Orçamento x Realizado.',capacidade:60,usadas:5,livres:55,
+   campos:[{col:'A',key:'nome',label:'Categoria',tipo:'texto',obrig:true},{col:'C',key:'grupo',label:'Grupo (ex.: Pessoal, Estrutura, Operacional)',tipo:'texto',obrig:true},{col:'D',key:'classe',label:'Classificação',tipo:'lista',opcoes:['Fixa','Variável'],obrig:true}],
+   itens:[{row:35,vals:{nome:'Aluguel',grupo:'Estrutura',classe:'Fixa'}},{row:36,vals:{nome:'Salários',grupo:'Pessoal',classe:'Fixa'}},
+          {row:37,vals:{nome:'Custas processuais',grupo:'Operacional',classe:'Variável'}},{row:38,vals:{nome:'Sistemas jurídicos',grupo:'Operacional',classe:'Fixa'}},
+          {row:39,vals:{nome:'Tráfego pago',grupo:'Comercial',classe:'Variável'}}]},
+  {chave:'subcategorias',label:'Subcategorias',nota:'Detalhe opcional dos lançamentos.',capacidade:60,usadas:3,livres:57,
+   campos:[{col:'F',key:'nome',label:'Subcategoria',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Mensal'}},{row:16,vals:{nome:'Parcelado'}},{row:17,vals:{nome:'Eventual'}}]},
+  {chave:'formas',label:'Formas de pagamento',nota:'',capacidade:20,usadas:3,livres:17,
+   campos:[{col:'H',key:'nome',label:'Forma de pagamento',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'PIX'}},{row:16,vals:{nome:'Transferência/TED'}},{row:17,vals:{nome:'Boleto'}}]},
+  {chave:'bancos',label:'Bancos',nota:'',capacidade:20,usadas:2,livres:18,
+   campos:[{col:'J',key:'nome',label:'Banco',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Banco do Brasil'}},{row:16,vals:{nome:'Sicoob'}}]},
+  {chave:'contas',label:'Contas bancárias',nota:'O saldo inicial é o ponto de partida do fluxo de caixa.',capacidade:20,usadas:1,livres:19,
+   campos:[{col:'L',key:'nome',label:'Nome da conta',tipo:'texto',obrig:true},{col:'M',key:'banco',label:'Banco',tipo:'lista',lista:'bancos'},{col:'N',key:'saldo',label:'Saldo inicial (R$)',tipo:'numero'}],
+   itens:[{row:15,vals:{nome:'EXEMPLO - Conta Corrente PJ',banco:'Sicoob',saldo:'R$ 0,00'}}]},
+  {chave:'centros',label:'Centros de custo',nota:'Áreas usadas no rateio de receitas e despesas.',capacidade:20,usadas:3,livres:17,
+   campos:[{col:'P',key:'nome',label:'Centro de custo',tipo:'texto',obrig:true},{col:'Q',key:'responsavel',label:'Responsável',tipo:'texto'}],
+   itens:[{row:15,vals:{nome:'Administrativo',responsavel:''}},{row:16,vals:{nome:'Cível',responsavel:'Marcos'}},{row:17,vals:{nome:'Trabalhista',responsavel:'Joice'}}]},
+  {chave:'socios',label:'Sócios',nota:'A soma das participações deve fechar 100%.',capacidade:10,usadas:2,livres:8,
+   campos:[{col:'S',key:'nome',label:'Sócio',tipo:'texto',obrig:true},{col:'T',key:'participacao',label:'% de participação (ex.: 50)',tipo:'percentual'}],
+   itens:[{row:15,vals:{nome:'Marcos',participacao:'50,0%'}},{row:16,vals:{nome:'Joice',participacao:'50,0%'}}]},
+  {chave:'advogados',label:'Advogados',nota:'Quem pode ser responsável por processos e prazos.',capacidade:20,usadas:2,livres:18,
+   campos:[{col:'V',key:'nome',label:'Advogado',tipo:'texto',obrig:true},{col:'W',key:'oab',label:'OAB',tipo:'texto'}],
+   itens:[{row:15,vals:{nome:'Marcos',oab:''}},{row:16,vals:{nome:'Joice',oab:''}}]},
+  {chave:'tipoHonorario',label:'Tipos de honorários',nota:'Base do relatório de receitas por tipo.',capacidade:15,usadas:4,livres:11,
+   campos:[{col:'AC',key:'nome',label:'Tipo de honorário',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Honorários contratuais'}},{row:16,vals:{nome:'Honorários de êxito'}},
+          {row:17,vals:{nome:'Honorários de sucumbência'}},{row:18,vals:{nome:'Consultoria'}}]},
+  {chave:'statusCliente',label:'Status de cliente',nota:'',capacidade:5,usadas:4,livres:1,
+   campos:[{col:'AL',key:'nome',label:'Status',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Ativo'}},{row:16,vals:{nome:'Inativo'}},{row:17,vals:{nome:'Prospect'}},{row:18,vals:{nome:'Inadimplente'}}]},
+  {chave:'statusProcesso',label:'Status de processo',nota:'',capacidade:10,usadas:3,livres:7,
+   campos:[{col:'AN',key:'nome',label:'Status',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Em andamento'}},{row:16,vals:{nome:'Suspenso'}},{row:17,vals:{nome:'Em recurso'}}]},
+  {chave:'fases',label:'Fases processuais',nota:'',capacidade:10,usadas:3,livres:7,
+   campos:[{col:'AP',key:'nome',label:'Fase',tipo:'texto',obrig:true}],
+   itens:[{row:15,vals:{nome:'Pré-processual'}},{row:16,vals:{nome:'Instrução'}},{row:17,vals:{nome:'Recursal'}}]}
+ ]};
+const DEMO_TAB={
+ lancamentos:{titulos:['ID','Competência','Vencimento','Pagamento','Tipo','Categoria','Descrição','Cliente','Processo','Previsto','Realizado','Status','Atraso'],
+  keys:['','competencia','vencimento','pagamento','tipo','categoria','descricao','cliente','processo','previsto','realizado','',''],
+  linhas:[
+   {row:9,cels:['LC-0003','05/01/2026','10/01/2026','10/01/2026','Receita','Honorários contratuais','EXEMPLO Entrada contrato','EXEMPLO - Construtora Vale Ltda','EXEMPLO 5001234-56.2026.8.13.0451','R$ 6.000,00','R$ 6.000,00','Pago','0']},
+   {row:8,cels:['LC-0002','05/01/2026','15/01/2026','','Receita','Honorários de êxito','EXEMPLO Êxito 1ª instância','EXEMPLO - Maria S. Pereira','','R$ 4.500,00','—','Vencido','30']},
+   {row:7,cels:['LC-0001','02/01/2026','05/01/2026','05/01/2026','Despesa','Aluguel','EXEMPLO Aluguel da sede','','','R$ 3.200,00','R$ 3.200,00','Pago','0']}]},
+ clientes:{titulos:['Código','Nome','CPF/CNPJ','Telefone','Contratados','Recebidos','Saldo devedor','Processos','Status'],
+  keys:['','nome','doc','tel','','','','','status'],
+  linhas:[
+   {row:7,cels:['CLI-001','EXEMPLO - Construtora Vale Ltda','12.345.678/0001-90','(35) 99999-0000','R$ 24.000,00','R$ 6.000,00','R$ 18.000,00','2','Ativo']},
+   {row:8,cels:['CLI-002','EXEMPLO - Maria S. Pereira','123.456.789-00','(35) 98888-0000','R$ 9.000,00','R$ 0,00','R$ 9.000,00','1','Inadimplente']}]},
+ processos:{titulos:['Processo','Cliente','Parte contrária','Advogado da parte contrária','Contato do adv. contrário','Advogado','Status','Fase','Próximo compromisso','Data do prazo','Dias','Honor. recebidos','Resultado'],
+  keys:['numero','cliente','contraria','advContraria','contatoContraria','advogado','status','fase','compromisso','prazo','','',''],
+  linhas:[
+   {row:7,cels:['EXEMPLO 5001234-56.2026.8.13.0451','EXEMPLO - Construtora Vale Ltda','EXEMPLO - Metalúrgica Sul Ltda','EXEMPLO - Dr. Paulo R. Andrade (OAB/MG 111.111)','(31) 3222-0000 · paulo@exemplo.adv.br','Marcos','Em andamento','Instrução','Audiência de instrução','20/08/2026','7','R$ 6.000,00','R$ 5.100,00']},
+   {row:8,cels:['EXEMPLO 5009876-11.2026.5.03.0102','EXEMPLO - Maria S. Pereira','EXEMPLO - Transportes MG S.A.','EXEMPLO - Dra. Clara M. Bueno (OAB/MG 222.222)','(35) 3333-0000 · clara@exemplo.adv.br','Joice','Em recurso','Recursal','Contrarrazões','15/08/2026','2','R$ 0,00','-R$ 450,00']}]},
+ receber:{titulos:['Cliente','Processo','Parcela','Vencimento','Valor','Recebido','Saldo','Atraso','Status'],
+  keys:['cliente','processo','parcela','vencimento','valor','recebido','','',''],
+  linhas:[
+   {row:7,cels:['EXEMPLO - Construtora Vale Ltda','EXEMPLO 5001234-56.2026.8.13.0451','1/4','10/01/2026','R$ 6.000,00','R$ 6.000,00','R$ 0,00','0','Recebido']},
+   {row:8,cels:['EXEMPLO - Construtora Vale Ltda','EXEMPLO 5001234-56.2026.8.13.0451','2/4','10/02/2026','R$ 6.000,00','R$ 0,00','R$ 6.000,00','184','Vencido']},
+   {row:9,cels:['EXEMPLO - Maria S. Pereira','','1/1','15/09/2026','R$ 9.000,00','R$ 0,00','R$ 9.000,00','0','A vencer']}]},
+ pagar:{titulos:['Fornecedor','Categoria','Descrição','Vencimento','Valor','Pagamento','Valor pago','Status','Atraso','Alerta'],
+  keys:['fornecedor','categoria','descricao','vencimento','valor','pagamento','pago','','',''],
+  linhas:[
+   {row:7,cels:['EXEMPLO - Imobiliária Central','Aluguel','Aluguel da sede','05/09/2026','R$ 3.200,00','','','A vencer','0','> VENCE EM 6 DIA(S)']},
+   {row:8,cels:['EXEMPLO - Sistema Jurídico X','Sistemas jurídicos','Licença mensal','10/08/2026','R$ 390,00','','','Vencido','3','!! VENCIDO HÁ 3 DIA(S)']}]},
+ honorarios:{titulos:['Cliente','Processo','Tipo de honorário','Contratado','Parcelas','Valor da parcela','Recebido','Saldo','Status'],
+  keys:['cliente','processo','tipo','valor','parcelas','','','',''],
+  linhas:[{row:7,cels:['EXEMPLO - Construtora Vale Ltda','EXEMPLO 5001234-56.2026.8.13.0451','Honorários contratuais','R$ 24.000,00','4','R$ 6.000,00','R$ 6.000,00','R$ 18.000,00','Parcial']}]},
+ retiradas:{titulos:['Data','Sócio','Tipo de retirada','Descrição','Valor','Forma'],
+  keys:['data','socio','tipo','descricao','valor','forma'],
+  linhas:[{row:7,cels:['05/01/2026','Marcos','Pró-labore','EXEMPLO Pró-labore janeiro','R$ 5.000,00','PIX']}]}
+};
+const DEMO_PAINEL={
+ ano:2026,mes:1,
+ cards:[{label:'Faturamento do mês',valor:'R$ 10.500'},{label:'Recebimentos do mês',valor:'R$ 6.000'},
+  {label:'Despesas do mês',valor:'R$ 3.590'},{label:'Pagamentos do mês',valor:'R$ 3.200'},
+  {label:'Resultado líquido (mês)',valor:'R$ 6.910'},{label:'Margem líquida (mês)',valor:'65,8%'},
+  {label:'Resultado de caixa (mês)',valor:'R$ 2.800'},{label:'Saldo disponível',valor:'R$ 2.800'},
+  {label:'Contas a receber',valor:'R$ 19.500'},{label:'Receber vencido',valor:'R$ 10.500'},
+  {label:'Contas a pagar',valor:'R$ 3.590'},{label:'Pagar vencido',valor:'R$ 390'},
+  {label:'Faturamento do ano',valor:'R$ 10.500'},{label:'Resultado do ano',valor:'R$ 6.910'},
+  {label:'Inadimplência',valor:'100,0%'},{label:'Prazos nos próx. 7 dias',valor:'2'}],
+ serie:[['Jan','R$ 6.000','R$ 3.200'],['Fev','R$ 8.400','R$ 3.900'],['Mar','R$ 12.100','R$ 4.300'],
+  ['Abr','R$ 9.800','R$ 4.050'],['Mai','R$ 14.200','R$ 5.100'],['Jun','R$ 11.600','R$ 4.800'],
+  ['Jul','R$ 15.300','R$ 5.400'],['Ago','R$ 7.200','R$ 4.100'],['Set','R$ 0','R$ 0'],
+  ['Out','R$ 0','R$ 0'],['Nov','R$ 0','R$ 0'],['Dez','R$ 0','R$ 0']],
+ alertas:{
+  prazos:[{processo:'EXEMPLO 5009876-11.2026.5.03.0102',cliente:'EXEMPLO - Maria S. Pereira',compromisso:'Contrarrazões',data:'15/08/2026',dias:2},
+          {processo:'EXEMPLO 5001234-56.2026.8.13.0451',cliente:'EXEMPLO - Construtora Vale Ltda',compromisso:'Audiência de instrução',data:'20/08/2026',dias:7}],
+  receber:[{cliente:'EXEMPLO - Construtora Vale Ltda',vencimento:'10/02/2026',saldo:'R$ 6.000,00',dias:'184',status:'Vencido'},
+           {cliente:'EXEMPLO - Maria S. Pereira',vencimento:'15/09/2026',saldo:'R$ 9.000,00',dias:'0',status:'A vencer'}],
+  pagar:[{fornecedor:'EXEMPLO - Sistema Jurídico X',vencimento:'10/08/2026',valor:'R$ 390,00',dias:'3',status:'Vencido'},
+         {fornecedor:'EXEMPLO - Imobiliária Central',vencimento:'05/09/2026',valor:'R$ 3.200,00',dias:'0',status:'A vencer'}]}
+};
+const DEMO_REL={
+ dre:[['DRE GERENCIAL (competência)','Jan','Fev','Mar','TOTAL ANO'],
+  ['RECEITA BRUTA','R$ 10.500','R$ 8.400','R$ 12.100','R$ 31.000'],
+  ['(-) Impostos e tributos','R$ 630','R$ 504','R$ 726','R$ 1.860'],
+  ['(=) RECEITA LÍQUIDA','R$ 9.870','R$ 7.896','R$ 11.374','R$ 29.140'],
+  ['(-) Despesas com pessoal','R$ 0','R$ 0','R$ 0','R$ 0'],
+  ['(-) Despesas de estrutura','R$ 3.200','R$ 3.200','R$ 3.200','R$ 9.600'],
+  ['(-) Despesas operacionais','R$ 390','R$ 390','R$ 390','R$ 1.170'],
+  ['(=) RESULTADO OPERACIONAL','R$ 6.280','R$ 4.306','R$ 7.784','R$ 18.370'],
+  ['(=) RESULTADO LÍQUIDO','R$ 6.280','R$ 4.306','R$ 7.784','R$ 18.370'],
+  ['MARGEM LÍQUIDA %','59,8%','51,3%','64,3%','59,3%']],
+ indicadores:[['INDICADOR','VALOR'],['Faturamento bruto (ano)','R$ 31.000'],['Resultado líquido (ano)','R$ 18.370'],
+  ['Margem líquida','59,3%'],['Ticket médio por cliente','R$ 15.500'],['Inadimplência','33,9%'],
+  ['Custo fixo mensal','R$ 3.590'],['Ponto de equilíbrio mensal','R$ 4.010']],
+ honorarios:[['TIPO DE HONORÁRIO','FATURADO','RECEBIDO','% DO FATURAMENTO'],
+  ['Honorários contratuais','R$ 24.000','R$ 6.000','77,4%'],['Honorários de êxito','R$ 4.500','R$ 0','14,5%'],
+  ['Consultoria','R$ 2.500','R$ 2.500','8,1%']],
+ grupos:[['GRUPO','VALOR','% DAS DESPESAS','MÉDIA MENSAL'],['Estrutura','R$ 9.600','89,1%','R$ 800'],
+  ['Operacional','R$ 1.170','10,9%','R$ 98']],
+ atrasos:[['FAIXA DE ATRASO','VALOR','Nº DE TÍTULOS','% DO TOTAL'],['A vencer','R$ 9.000','1','46,2%'],
+  ['Vencido 1 a 30 dias','R$ 0','0','0,0%'],['Vencido acima de 90 dias','R$ 6.000','1','30,8%']],
+ ranking:[['#','CLIENTE','RECEBIDO','SALDO DEVEDOR'],['1','EXEMPLO - Construtora Vale Ltda','R$ 6.000','R$ 18.000'],
+  ['2','EXEMPLO - Maria S. Pereira','R$ 0','R$ 9.000']],
+ equipe:[['ADVOGADO','HONOR. RECEBIDOS','RESULTADO'],['Marcos','R$ 6.000','R$ 5.100'],['Joice','R$ 0','-R$ 450']]
+};
+
+function demoObter(k,l){
+  const t=DEMO_TAB[k]||{titulos:[],linhas:[],keys:[]};
+  const row=(t.linhas.filter(x=>x.row===l)[0])||{cels:[]};
+  const o={row:l};
+  (DEMO_MAPA[k].campos||[]).forEach(c=>{
+    const i=(t.keys||[]).indexOf(c.key);
+    let v=i>-1?row.cels[i]:'';
+    if(v==='—'||v==null) v='';
+    if(c.tipo==='numero') v=String(v).replace(/[R$\s.]/g,'').replace(',','.');
+    if(c.tipo==='data'){const m=String(v).match(/(\d{2})\/(\d{2})\/(\d{4})/);v=m?m[3]+'-'+m[2]+'-'+m[1]:'';}
+    o[c.key]=v;
+  });
+  return o;
+}
+function demoDetalhar(k,l){
+  const t=DEMO_TAB[k]||{titulos:[],linhas:[],keys:[]};
+  const row=(t.linhas.filter(x=>x.row===l)[0])||{cels:[]};
+  return {aba:DEMO_MAPA[k].aba,row:l,itens:t.titulos.map((h,i)=>({
+    col:'',campo:h,valor:row.cels[i],manual:!!(t.keys||[])[i]
+  }))};
+}
+const google={script:{run:(function(){
+  const api={};
+  const fns={
+    getListas:()=>DEMO_LISTAS,
+    getPainel:(a,m)=>Object.assign({},DEMO_PAINEL,{ano:Number(a)||2026,mes:Number(m)||1}),
+    listar:(k,b,f)=>{
+      const t=DEMO_TAB[k]||{titulos:[],linhas:[]};
+      let ls=t.linhas;
+      if(b) ls=ls.filter(l=>l.cels.join(' ').toLowerCase().indexOf(String(b).toLowerCase())>-1);
+      if(f) Object.keys(f).forEach(col=>{
+        const alvo=String(f[col]||'').trim().toLowerCase();
+        if(alvo) ls=ls.filter(l=>l.cels.join(' | ').toLowerCase().indexOf(alvo)>-1);
+      });
+      return {titulos:t.titulos,linhas:ls,total:ls.length,cadastrados:t.linhas.length};
+    },
+    obter:(k,l)=>demoObter(k,l),
+    detalhar:(k,l)=>demoDetalhar(k,l),
+    incluir:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: nada foi gravado. Publique o app no Drive para gravar de verdade.'}),
+    atualizar:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: nada foi gravado.'}),
+    excluir:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: nada foi excluído.'}),
+    gerarParcelas:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: as parcelas não foram gravadas.'}),
+    getRelatorio:(q)=>DEMO_REL[q]||DEMO_REL.dre,
+    atualizarPlanilha:()=>({ok:true,hora:new Date().toLocaleString('pt-BR'),msg:'MODO DEMONSTRAÇÃO: recálculo simulado.'}),
+    atualizarTudo:(a,m)=>({hora:new Date().toLocaleString('pt-BR'),painel:DEMO_PAINEL,listas:DEMO_LISTAS}),
+    getConfig:()=>DEMO_CFG,
+    salvarParametros:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: os parâmetros não foram gravados.'}),
+    cfgObter:(k,l)=>{const b=DEMO_CFG.blocos.filter(x=>x.chave===k)[0];const it=b.itens.filter(x=>x.row===l)[0];
+      const o={row:l};b.campos.forEach(c=>o[c.key]=it?String(it.vals[c.key]||'').replace(/[R$%\s.]/g,'').replace(',','.'):'');
+      if(it) b.campos.forEach(c=>{if(c.tipo==='texto'||c.tipo==='lista')o[c.key]=it.vals[c.key];});return o;},
+    cfgIncluir:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: o item não foi gravado na planilha.'}),
+    cfgAtualizar:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: nada foi alterado.'}),
+    cfgExcluir:()=>({ok:true,msg:'MODO DEMONSTRAÇÃO: nada foi removido.'}),
+    getUrlPlanilha:()=>'https://drive.google.com/drive/folders/13tvy4f34nJPiV0wmXuluApD8UJqC1cU5'
+  };
+  let ok=null,er=null;
+  api.withSuccessHandler=f=>{ok=f;return api;};
+  api.withFailureHandler=f=>{er=f;return api;};
+  Object.keys(fns).forEach(n=>api[n]=function(){
+    const args=arguments;
+    setTimeout(()=>{try{ok&&ok(fns[n].apply(null,args));}catch(e){er&&er(e);}},180);
+  });
+  return api;
+})()}};
+</script><div id="app">
+  <aside>
+    <div class="logo">
+      <div class="mark">AV</div>
+      <div class="sub">ADVOCACIA</div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="pe">Banco de dados: <a id="linkPlan" href="#" target="_blank">planilha no Drive</a></div>
+  </aside>
+  <main>
+    <header class="top">
+      <div>
+        <h1 id="tTit">Painel de Gestão</h1>
+        <p id="tSub">Carregando dados da planilha…</p>
+        <p class="hora" id="tHora">—</p>
+      </div>
+      <div class="periodo">
+        <select id="selMes"></select>
+        <select id="selAno"></select>
+        <button class="btn gold" id="btnPeriodo">Aplicar período</button>
+        <button class="btn ref" id="btnAtualizar" title="Recalcula a planilha e recarrega os dados">&#8635; Atualizar</button>
+      </div>
+    </header>
+    <div id="view"><div class="load">Conectando à planilha…</div></div>
+  </main>
+</div>
+<div id="toast"></div>
+
+<script>
+/* ============ INFRA ============ */
+const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+let L={}, ATUAL='painel', CACHE={};
+
+function srv(fn,...args){
+  return new Promise((ok,err)=>google.script.run.withSuccessHandler(ok).withFailureHandler(e=>err(e))[fn](...args));
+}
+function toast(msg,erro){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.borderLeftColor=erro?'#A32020':'#C7A77F';
+  t.style.display='block'; clearTimeout(t._t); t._t=setTimeout(()=>t.style.display='none',4200);
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function el(id){return document.getElementById(id);}
+function tag(txt){
+  const t=String(txt||'');
+  if(/vencido|prejuízo|divergente|inadimplente|acima/i.test(t)) return '<span class="tag v">'+esc(t)+'</span>';
+  if(/a vencer|parcial|abaixo|baixa|suspenso/i.test(t)) return '<span class="tag a">'+esc(t)+'</span>';
+  if(/pago|recebido|quitado|ativo|dentro|ótima|êxito|andamento/i.test(t)) return '<span class="tag o">'+esc(t)+'</span>';
+  return t?'<span class="tag n">'+esc(t)+'</span>':'';
+}
+const NUMRX=/^-?R?\$?\s?[\d.,]+%?$/;
+
+/* ============ MENU ============ */
+const MENU=[
+  {g:'GESTÃO'},
+  {k:'painel',   t:'Painel de Gestão'},
+  {k:'agenda',   t:'Prazos e Vencimentos'},
+  {g:'FINANCEIRO'},
+  {k:'lancamentos',t:'Lançamentos'},
+  {k:'receber',  t:'Contas a Receber'},
+  {k:'pagar',    t:'Contas a Pagar'},
+  {k:'honorarios',t:'Honorários Contratados'},
+  {k:'retiradas',t:'Pró-labore e Lucros'},
+  {g:'CARTEIRA'},
+  {k:'clientes', t:'Clientes'},
+  {k:'processos',t:'Processos'},
+  {g:'ANÁLISE'},
+  {k:'relatorios',t:'Relatórios'},
+  {g:'ESTRUTURA'},
+  {k:'config',t:'Configurações'}
+];
+function montaMenu(){
+  el('nav').innerHTML=MENU.map(m=>m.g?'<div class="grp">'+m.g+'</div>'
+    :'<button data-k="'+m.k+'">'+m.t+'</button>').join('');
+  el('nav').querySelectorAll('button').forEach(b=>b.onclick=()=>ir(b.dataset.k));
+}
+function ir(k){
+  ATUAL=k;
+  el('nav').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  const m=MENU.find(x=>x.k===k);
+  el('tTit').textContent=m?m.t:k;
+  if(k==='painel') painel();
+  else if(k==='agenda') agenda();
+  else if(k==='relatorios') relatorios();
+  else if(k==='config') config();
+  else grade(k);
+}
+
+/* ============ ATUALIZAÇÃO ============ */
+function btnRef(rotulo){
+  return '<button class="btn ref" data-ref onclick="atualizar()">&#8635; '+(rotulo||'Atualizar')+'</button>';
+}
+async function atualizar(silencioso){
+  document.querySelectorAll('[data-ref]').forEach(b=>{b.disabled=true;b.textContent='Atualizando…';});
+  try{
+    const r=await srv('atualizarPlanilha');
+    L=await srv('getListas');
+    el('tHora').textContent='Planilha recalculada em '+r.hora;
+    if(!silencioso) toast('Planilha recalculada e dados recarregados.');
+    ir(ATUAL);
+  }catch(e){ erro(e); }
+}
+
+/* ============ PAINEL ============ */
+async function painel(){
+  el('view').innerHTML='<div class="load">Calculando indicadores…</div>';
+  try{
+    const d=await srv('getPainel',el('selAno').value,el('selMes').value);
+    el('tSub').textContent='Período: '+MESES[d.mes-1]+'/'+d.ano+' · dados vindos da planilha no Google Drive';
+    const cards=d.cards.map(c=>{
+      const neg=/vencido|inadimpl/i.test(c.label)&&!/^R\$ ?0|^0|^—|^$/.test(c.valor);
+      return '<div class="card'+(neg?' alerta':'')+'"><div class="lb">'+esc(c.label)+
+             '</div><div class="vl">'+esc(c.valor||'—')+'</div></div>';
+    }).join('');
+    const nums=d.serie.map(r=>[r[0],num(r[1]),num(r[2])]);
+    const mx=Math.max(1,...nums.map(r=>Math.max(r[1],r[2])));
+    const barras=nums.map(r=>'<div class="col">'+
+        '<div class="b r" style="height:'+(r[1]/mx*100)+'%" title="Receitas '+esc(r[1])+'"></div>'+
+        '<div class="b d" style="height:'+(r[2]/mx*100)+'%" title="Despesas '+esc(r[2])+'"></div>'+
+        '<div class="m">'+esc(r[0])+'</div></div>').join('');
+    const a=d.alertas;
+    el('view').innerHTML=
+      '<div class="secbar" style="margin-bottom:12px">'+
+        '<div style="font-size:12px;color:var(--cinza)">Indicadores de '+MESES[d.mes-1]+'/'+d.ano+
+        ' — calculados pelas fórmulas da planilha.</div>'+btnRef('Atualizar indicadores')+'</div>'+
+      '<div class="cards">'+cards+'</div>'+
+      '<h2 class="sec">Receitas x Despesas no ano (regime de caixa)</h2>'+
+      '<div class="box"><div class="barra">'+barras+'</div>'+
+      '<div class="leg"><span><i style="background:#C7A77F"></i>Receitas</span>'+
+      '<span><i style="background:#110D0C"></i>Despesas</span></div></div>'+
+      '<h2 class="sec">Precisa da sua atenção</h2>'+
+      '<div class="grid2">'+
+        mini('Prazos processuais (até 15 dias)',a.prazos.slice(0,8).map(p=>
+          [p.processo,p.compromisso||'—',p.data,(p.dias<0?'atrasado':p.dias+' dia(s)')]),
+          ['Processo','Compromisso','Data','Prazo'])+
+        mini('Contas a receber em aberto',a.receber.slice(0,8).map(r=>
+          [r.cliente,r.vencimento,r.saldo,r.status]),['Cliente','Vencimento','Saldo','Status'])+
+        mini('Contas a pagar em aberto',a.pagar.slice(0,8).map(r=>
+          [r.fornecedor,r.vencimento,r.valor,r.status]),['Fornecedor','Vencimento','Valor','Status'])+
+      '</div>';
+  }catch(e){erro(e);}
+}
+function num(v){const n=parseFloat(String(v).replace(/[^\d,-]/g,'').replace(',','.'));return isNaN(n)?0:Math.max(0,n);}
+function mini(titulo,linhas,cabec){
+  const corpo=linhas.length?linhas.map(l=>'<tr>'+l.map((c,i)=>
+      '<td'+(i===cabec.length-1?'':'')+'>'+(i===cabec.length-1?tag(c):esc(c))+'</td>').join('')+'</tr>').join('')
+    :'<tr><td colspan="'+cabec.length+'" class="vazio">Nada pendente.</td></tr>';
+  return '<div class="box"><div class="bar"><strong>'+esc(titulo)+'</strong></div>'+
+         '<div class="scroll"><table><thead><tr>'+cabec.map(c=>'<th>'+esc(c)+'</th>').join('')+
+         '</tr></thead><tbody>'+corpo+'</tbody></table></div></div>';
+}
+
+/* ============ AGENDA ============ */
+async function agenda(){
+  el('view').innerHTML='<div class="load">Buscando prazos e vencimentos…</div>';
+  try{
+    const d=await srv('getPainel',el('selAno').value,el('selMes').value);
+    const a=d.alertas;
+    el('tSub').textContent='Prazos processuais e compromissos financeiros em aberto';
+    el('view').innerHTML=
+      '<div class="secbar" style="margin-bottom:12px">'+
+        '<div style="font-size:12px;color:var(--cinza)">Prazos e vencimentos recalculados a partir da data de hoje.</div>'+
+        btnRef('Atualizar agenda')+'</div>'+
+      '<div class="aviso">Os prazos vêm da coluna <b>Data do próximo prazo</b> da aba PROCESSOS. '+
+      'Atualize-a a cada movimentação para manter a agenda confiável.</div>'+
+      '<h2 class="sec">Prazos processuais</h2>'+
+      mini('Todos os prazos até 15 dias',a.prazos.map(p=>[p.processo,p.cliente,p.compromisso||'—',p.data,
+        (p.dias<0?'atrasado '+Math.abs(p.dias)+'d':p.dias+' dia(s)')]),
+        ['Processo','Cliente','Compromisso','Data','Prazo'])+
+      '<h2 class="sec">Financeiro em aberto</h2><div class="grid2">'+
+      mini('A receber',a.receber.map(r=>[r.cliente,r.vencimento,r.saldo,r.status]),
+        ['Cliente','Vencimento','Saldo','Status'])+
+      mini('A pagar',a.pagar.map(r=>[r.fornecedor,r.vencimento,r.valor,r.status]),
+        ['Fornecedor','Vencimento','Valor','Status'])+'</div>';
+  }catch(e){erro(e);}
+}
+
+/* ============ GRADES CRUD ============ */
+const FILTROS={};   // filtros ativos por aba
+
+function fltAtivos(chave){
+  const f=FILTROS[chave]||{}; let n=0;
+  for(const k in f) if(String(f[k]||'').trim()) n++;
+  return n;
+}
+function aplicarFiltros(chave){
+  const f={};
+  document.querySelectorAll('[data-flt]').forEach(i=>{ if(i.value) f[i.dataset.flt]=i.value; });
+  FILTROS[chave]=f;
+  grade(chave, (el('busca')||{}).value||'');
+}
+function limparFiltros(chave){ FILTROS[chave]={}; grade(chave,''); }
+
+async function grade(chave,busca){
+  el('view').innerHTML='<div class="load">Lendo registros da planilha…</div>';
+  try{
+    const flt=FILTROS[chave]||{};
+    const d=await srv('listar',chave,busca||'',flt);
+    CACHE[chave]=d;
+    const cfg=L.mapa[chave];
+    const nf=fltAtivos(chave);
+    el('tSub').textContent=(nf||busca)
+      ? d.total+' de '+d.cadastrados+' registro(s) — filtro aplicado na aba '+cfg.aba
+      : d.total+' registro(s) na aba '+cfg.aba;
+
+    const filtros=(cfg.filtros||[]).map(f=>{
+      const v=flt[f.col]||'';
+      if(f.tipo==='texto'){
+        return '<input data-flt="'+f.col+'" placeholder="'+esc(f.label)+'" value="'+esc(v)+'" style="min-width:150px">';
+      }
+      const fonte=f.opcoes||L[f.lista]||[];
+      return '<select data-flt="'+f.col+'"><option value="">'+esc(f.label)+': todos</option>'+
+        fonte.map(o=>'<option'+(String(o)===String(v)?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';
+    }).join('');
+
+    const corpo=d.linhas.length?d.linhas.map(l=>'<tr>'+l.cels.map(c=>
+        (NUMRX.test(String(c).trim())&&String(c).trim()!=='' ? '<td class="num">'+esc(c)+'</td>'
+        : /vencido|a vencer|pago|recebido|quitado|parcial|ativo|andamento|prejuízo|margem|acima|dentro|abaixo|divergente|encerrado|suspenso|arquivado/i.test(String(c))
+          ? '<td>'+tag(c)+'</td>' : '<td>'+esc(c)+'</td>')).join('')+
+      '<td class="num" style="white-space:nowrap">'+
+      '<button class="btn ref sm" onclick="ver(\''+chave+'\','+l.row+')">Visualizar</button> '+
+      '<button class="btn ghost sm" onclick="editar(\''+chave+'\','+l.row+')">Editar</button> '+
+      '<button class="btn del sm" onclick="apagar(\''+chave+'\','+l.row+')">Excluir</button></td></tr>').join('')
+      :'<tr><td colspan="'+(d.titulos.length+1)+'" class="vazio">'+
+        (nf||busca?'Nenhum registro atende ao filtro. Use “Limpar” para ver todos.':'Nenhum registro. Clique em “Novo registro”.')+
+       '</td></tr>';
+
+    el('view').innerHTML=
+      '<div class="box"><div class="bar">'+
+        '<strong>'+esc(cfg.aba)+'</strong>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+          '<input id="busca" placeholder="Buscar em todas as colunas…" value="'+esc(busca||'')+'" style="min-width:190px">'+
+          (chave==='honorarios'?'<button class="btn ghost" onclick="modalParcelas()">Gerar parcelas</button>':'')+
+          '<button class="btn ref" data-ref onclick="atualizar()">&#8635; Atualizar</button>'+
+          '<button class="btn gold" onclick="editar(\''+chave+'\',0)">+ Novo registro</button>'+
+        '</div></div>'+
+        (filtros?'<div class="filtros">'+filtros+
+          '<button class="btn gold sm" onclick="aplicarFiltros(\''+chave+'\')">Filtrar</button>'+
+          '<button class="btn ghost sm" onclick="limparFiltros(\''+chave+'\')">Limpar</button>'+
+          '<span class="fdica">O período do topo vale para o Painel, a Agenda e os Relatórios. '+
+          'Nesta tela, use estes filtros.</span></div>':'')+
+        '<div class="scroll"><table><thead><tr>'+
+        d.titulos.map(t=>'<th>'+esc(t)+'</th>').join('')+'<th class="num">Ações</th></tr></thead>'+
+        '<tbody>'+corpo+'</tbody></table></div></div>'+
+      '<div class="aviso" style="margin-top:14px">Em <b>Visualizar</b> você vê a ficha completa do registro, '+
+      'inclusive as colunas calculadas (saldo, status, atraso, rentabilidade). Em <b>Editar</b> aparecem '+
+      'somente os campos de preenchimento manual — as fórmulas da planilha cuidam do resto.</div>';
+
+    const b=el('busca');
+    if(b) b.onkeydown=e=>{if(e.key==='Enter')aplicarFiltros(chave);};
+    document.querySelectorAll('[data-flt]').forEach(i=>{
+      if(i.tagName==='SELECT') i.onchange=()=>aplicarFiltros(chave);
+      else i.onkeydown=e=>{if(e.key==='Enter')aplicarFiltros(chave);};
+    });
+  }catch(e){erro(e);}
+}
+
+/* ============ FICHA (VISUALIZAR) ============ */
+async function ver(chave,linha){
+  const m=document.createElement('div'); m.className='mask';
+  m.innerHTML='<div class="modal" style="max-width:640px"><div class="mh"><h3>Ficha do registro</h3>'+
+    '<button class="x">&times;</button></div><div id="vBox" class="mb" style="grid-template-columns:1fr">'+
+    '<div class="load">Lendo a linha '+linha+' da planilha…</div></div>'+
+    '<div class="mf"><button class="btn ghost" id="vFec">Fechar</button>'+
+    '<button class="btn gold" id="vEd">Editar este registro</button></div></div>';
+  document.body.appendChild(m);
+  const fechar=()=>m.remove();
+  m.querySelector('.x').onclick=fechar; el('vFec').onclick=fechar;
+  m.onclick=e=>{if(e.target===m)fechar();};
+  el('vEd').onclick=()=>{ fechar(); editar(chave,linha); };
+  try{
+    const d=await srv('detalhar',chave,linha);
+    const linhas=d.itens.map(i=>
+      '<tr><th style="text-align:left;white-space:nowrap">'+esc(i.campo)+'</th>'+
+      '<td>'+(/vencido|a vencer|pago|recebido|parcial|ativo|andamento|suspenso|encerrado|acima|dentro|abaixo|divergente/i.test(String(i.valor))
+        ? tag(i.valor) : esc(i.valor||'—'))+'</td>'+
+      '<td class="num"><span class="tag '+(i.manual?'n':'o')+'">'+(i.manual?'editável':'calculado')+'</span></td></tr>').join('');
+    el('vBox').innerHTML='<div class="ficha"><div class="fh">'+esc(d.aba)+' · linha '+d.row+'</div>'+
+      '<div class="scroll" style="max-height:58vh"><table>'+linhas+'</table></div></div>';
+  }catch(e){ el('vBox').innerHTML='<div class="aviso" style="border-left-color:#A32020">'+esc(e.message||e)+'</div>'; }
+}
+
+async function editar(chave,linha){
+  const cfg=L.mapa[chave];
+  let dados={};
+  if(linha){ try{ dados=await srv('obter',chave,linha); }catch(e){ return erro(e); } }
+  const campos=cfg.campos.map(c=>{
+    const v=dados[c.key]==null?'':dados[c.key];
+    let inp;
+    if(c.tipo==='lista'){
+      const ops=(L[c.lista]||[]).map(o=>'<option'+(String(o)===String(v)?' selected':'')+'>'+esc(o)+'</option>').join('');
+      inp='<select data-k="'+c.key+'"><option value=""></option>'+ops+'</select>';
+    }else if(c.tipo==='data'){
+      inp='<input type="date" data-k="'+c.key+'" value="'+esc(v)+'">';
+    }else if(c.tipo==='numero'){
+      inp='<input type="number" step="0.01" data-k="'+c.key+'" value="'+esc(v)+'">';
+    }else{
+      inp='<input data-k="'+c.key+'" value="'+esc(v)+'">';
+    }
+    const full=(c.key==='descricao'||c.key==='obs'||c.key==='compromisso')?' full':'';
+    return '<div class="fld'+full+'"><label>'+esc(c.label)+(c.obrig?' <span class="req">*</span>':'')+
+           '</label>'+inp+'</div>';
+  }).join('');
+  const m=document.createElement('div');
+  m.className='mask';
+  m.innerHTML='<div class="modal"><div class="mh"><h3>'+(linha?'Editar registro':'Novo registro')+
+    ' · '+esc(cfg.aba)+'</h3><button class="x">&times;</button></div>'+
+    '<div class="mb">'+campos+'</div>'+
+    '<div class="mf"><button class="btn ghost" id="mCanc">Cancelar</button>'+
+    '<button class="btn gold" id="mOk">'+(linha?'Salvar alterações':'Incluir registro')+'</button></div></div>';
+  document.body.appendChild(m);
+  const fechar=()=>m.remove();
+  m.querySelector('.x').onclick=fechar; el('mCanc').onclick=fechar;
+  m.onclick=e=>{if(e.target===m)fechar();};
+  el('mOk').onclick=async()=>{
+    const obj={};
+    m.querySelectorAll('[data-k]').forEach(i=>obj[i.dataset.k]=i.value);
+    const falta=cfg.campos.filter(c=>c.obrig&&!String(obj[c.key]||'').trim());
+    if(falta.length){ toast('Preencha: '+falta.map(f=>f.label).join(', '),true); return; }
+    el('mOk').disabled=true; el('mOk').textContent='Salvando…';
+    try{
+      const r=linha?await srv('atualizar',chave,linha,obj):await srv('incluir',chave,obj);
+      fechar(); toast(r.msg); grade(chave);
+    }catch(e){ el('mOk').disabled=false; el('mOk').textContent='Tentar novamente'; erro(e); }
+  };
+}
+
+async function apagar(chave,linha){
+  if(!confirm('Excluir este registro da linha '+linha+'?\n\nAs fórmulas da planilha são preservadas.')) return;
+  try{ const r=await srv('excluir',chave,linha); toast(r.msg); grade(chave); }catch(e){erro(e);}
+}
+
+function modalParcelas(){
+  const ops=(L.clientes||[]).map(c=>'<option>'+esc(c)+'</option>').join('');
+  const prc=(L.processos||[]).map(c=>'<option>'+esc(c)+'</option>').join('');
+  const m=document.createElement('div'); m.className='mask';
+  m.innerHTML='<div class="modal" style="max-width:560px"><div class="mh"><h3>Gerar parcelas em Contas a Receber</h3>'+
+    '<button class="x">&times;</button></div><div class="mb">'+
+    '<div class="fld"><label>Cliente <span class="req">*</span></label><select data-k="cliente">'+ops+'</select></div>'+
+    '<div class="fld"><label>Processo</label><select data-k="processo"><option value=""></option>'+prc+'</select></div>'+
+    '<div class="fld"><label>Valor total <span class="req">*</span></label><input type="number" step="0.01" data-k="valor"></div>'+
+    '<div class="fld"><label>Nº de parcelas <span class="req">*</span></label><input type="number" value="1" data-k="parcelas"></div>'+
+    '<div class="fld full"><label>1º vencimento <span class="req">*</span></label><input type="date" data-k="primeiro"></div>'+
+    '</div><div class="mf"><button class="btn ghost" id="pCanc">Cancelar</button>'+
+    '<button class="btn gold" id="pOk">Gerar parcelas</button></div></div>';
+  document.body.appendChild(m);
+  const fechar=()=>m.remove();
+  m.querySelector('.x').onclick=fechar; el('pCanc').onclick=fechar;
+  el('pOk').onclick=async()=>{
+    const o={}; m.querySelectorAll('[data-k]').forEach(i=>o[i.dataset.k]=i.value);
+    if(!o.cliente||!o.valor||!o.parcelas||!o.primeiro){toast('Preencha os campos obrigatórios.',true);return;}
+    el('pOk').disabled=true; el('pOk').textContent='Gerando…';
+    try{ const r=await srv('gerarParcelas',o); fechar(); toast(r.msg); }catch(e){erro(e);}
+  };
+}
+
+
+/* ============ CONFIGURAÇÕES ============ */
+async function config(){
+  el('view').innerHTML='<div class="load">Lendo a aba CONFIGURAÇÕES…</div>';
+  try{
+    const d=await srv('getConfig');
+    CACHE.config=d;
+    el('tSub').textContent='O que for cadastrado aqui alimenta as listas suspensas da plataforma e da planilha';
+    const p=d.parametros;
+    const params=(L.parametros||[]).map(c=>{
+      const v=p[c.key]==null?'':p[c.key];
+      let inp;
+      if(c.tipo==='lista'){
+        inp='<select data-p="'+c.key+'">'+(c.opcoes||[]).map(o=>
+          '<option'+(String(o)===String(v)?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';
+      }else if(c.tipo==='numero'){
+        inp='<input type="number" step="0.01" data-p="'+c.key+'" value="'+esc(v)+'">';
+      }else{
+        inp='<input data-p="'+c.key+'" value="'+esc(v)+'">';
+      }
+      return '<div class="fld"><label>'+esc(c.label)+'</label>'+inp+'</div>';
+    }).join('');
+    const anos=[]; for(let a=Number(p.ano||new Date().getFullYear())-3;a<=Number(p.ano||new Date().getFullYear())+3;a++) anos.push(a);
+    const periodo=
+      '<div class="fld"><label>Mês de referência</label><select data-p="mes">'+
+        MESES.map((m,i)=>'<option value="'+(i+1)+'"'+(Number(p.mes)===i+1?' selected':'')+'>'+m+'</option>').join('')+
+      '</select></div>'+
+      '<div class="fld"><label>Ano de referência</label><select data-p="ano">'+
+        anos.map(a=>'<option'+(Number(p.ano)===a?' selected':'')+'>'+a+'</option>').join('')+
+      '</select></div>';
+
+    const blocos=d.blocos.map(b=>{
+      const cab=b.campos.map(c=>'<th>'+esc(c.label.replace(/ \(.*$/,''))+'</th>').join('');
+      const corpo=b.itens.length?b.itens.map(it=>'<tr>'+
+          b.campos.map(c=>'<td>'+esc(it.vals[c.key])+'</td>').join('')+
+          '<td class="num"><button class="btn ghost sm" onclick="cfgEditar(\''+b.chave+'\','+it.row+')">Editar</button> '+
+          '<button class="btn del sm" onclick="cfgApagar(\''+b.chave+'\','+it.row+')">Excluir</button></td></tr>').join('')
+        :'<tr><td colspan="'+(b.campos.length+1)+'" class="vazio">Lista vazia.</td></tr>';
+      return '<div class="box"><div class="bar"><strong>'+esc(b.label)+'</strong>'+
+        '<button class="btn gold sm" onclick="cfgEditar(\''+b.chave+'\',0)">+ Incluir</button></div>'+
+        '<div class="scroll" style="max-height:260px"><table><thead><tr>'+cab+
+        '<th class="num">Ações</th></tr></thead><tbody>'+corpo+'</tbody></table></div>'+
+        '<div class="cap">'+(b.nota?esc(b.nota)+' · ':'')+b.usadas+' de '+b.capacidade+' posições usadas'+
+        (b.livres<=2?' <b>(quase cheia)</b>':'')+'</div></div>';
+    }).join('');
+
+    el('view').innerHTML=
+      '<div class="secbar" style="margin-bottom:12px">'+
+        '<div style="font-size:12px;color:var(--cinza)">Editando a aba CONFIGURAÇÕES da planilha, diretamente daqui.</div>'+
+        btnRef('Atualizar')+'</div>'+
+      '<div class="box"><div class="bar"><strong>Parâmetros gerais</strong>'+
+        '<button class="btn gold" id="btnParams">Salvar parâmetros</button></div>'+
+        '<div class="params">'+params+periodo+'</div>'+
+        '<div class="cap">O mês e o ano de referência valem para o painel, o calendário e todos os relatórios.</div></div>'+
+      '<h2 class="sec">Listas suspensas</h2>'+
+      '<div class="cfgwrap">'+blocos+'</div>'+
+      '<div class="aviso" style="margin-top:14px">Ao excluir um item, os registros já lançados com ele '+
+      '<b>continuam intactos</b> — apenas a lista deixa de oferecê-lo. Se você renomear um item, '+
+      'ajuste também os registros antigos que usavam o nome anterior. As listas de status, meses, anos e '+
+      'Sim/Não não aparecem aqui de propósito: as fórmulas dependem daqueles textos exatos.</div>';
+    el('btnParams').onclick=salvarParams;
+  }catch(e){erro(e);}
+}
+
+async function salvarParams(){
+  const o={};
+  document.querySelectorAll('[data-p]').forEach(i=>o[i.dataset.p]=i.value);
+  el('btnParams').disabled=true; el('btnParams').textContent='Salvando…';
+  try{
+    const r=await srv('salvarParametros',o);
+    el('selAno').value=o.ano; el('selMes').value=o.mes;
+    L=await srv('getListas');
+    toast(r.msg); config();
+  }catch(e){ el('btnParams').disabled=false; el('btnParams').textContent='Tentar novamente'; erro(e); }
+}
+
+async function cfgEditar(chave,linha){
+  const b=(CACHE.config.blocos||[]).find(x=>x.chave===chave);
+  if(!b) return;
+  let dados={};
+  if(linha){ try{ dados=await srv('cfgObter',chave,linha); }catch(e){ return erro(e); } }
+  const campos=b.campos.map(c=>{
+    const v=dados[c.key]==null?'':dados[c.key];
+    let inp;
+    if(c.tipo==='lista'){
+      const fonte=c.opcoes||L[c.lista]||[];
+      inp='<select data-k="'+c.key+'"><option value=""></option>'+fonte.map(o=>
+        '<option'+(String(o)===String(v)?' selected':'')+'>'+esc(o)+'</option>').join('')+'</select>';
+    }else if(c.tipo==='numero'||c.tipo==='percentual'){
+      inp='<input type="number" step="0.01" data-k="'+c.key+'" value="'+esc(v)+'">';
+    }else{
+      inp='<input data-k="'+c.key+'" value="'+esc(v)+'">';
+    }
+    return '<div class="fld full"><label>'+esc(c.label)+(c.obrig?' <span class="req">*</span>':'')+'</label>'+inp+'</div>';
+  }).join('');
+  const m=document.createElement('div'); m.className='mask';
+  m.innerHTML='<div class="modal" style="max-width:520px"><div class="mh"><h3>'+
+    (linha?'Editar item':'Novo item')+' · '+esc(b.label)+'</h3><button class="x">&times;</button></div>'+
+    '<div class="mb">'+campos+'</div>'+
+    '<div class="mf"><button class="btn ghost" id="cCanc">Cancelar</button>'+
+    '<button class="btn gold" id="cOk">'+(linha?'Salvar':'Incluir')+'</button></div></div>';
+  document.body.appendChild(m);
+  const fechar=()=>m.remove();
+  m.querySelector('.x').onclick=fechar; el('cCanc').onclick=fechar;
+  m.onclick=e=>{if(e.target===m)fechar();};
+  el('cOk').onclick=async()=>{
+    const o={};
+    m.querySelectorAll('[data-k]').forEach(i=>o[i.dataset.k]=i.value);
+    const falta=b.campos.filter(c=>c.obrig&&!String(o[c.key]||'').trim());
+    if(falta.length){ toast('Preencha: '+falta.map(f=>f.label).join(', '),true); return; }
+    el('cOk').disabled=true; el('cOk').textContent='Salvando…';
+    try{
+      const r=linha?await srv('cfgAtualizar',chave,linha,o):await srv('cfgIncluir',chave,o);
+      fechar(); L=await srv('getListas'); toast(r.msg); config();
+    }catch(e){ el('cOk').disabled=false; el('cOk').textContent='Tentar novamente'; erro(e); }
+  };
+}
+
+async function cfgApagar(chave,linha){
+  if(!confirm('Remover este item da lista?\n\nOs registros já lançados com ele continuam intactos.')) return;
+  try{
+    const r=await srv('cfgExcluir',chave,linha);
+    L=await srv('getListas'); toast(r.msg); config();
+  }catch(e){erro(e);}
+}
+
+/* ============ RELATÓRIOS ============ */
+const RELS=[['dre','DRE Gerencial (competência)'],['indicadores','Indicadores Financeiros'],
+            ['honorarios','Receitas por Tipo de Honorário'],['grupos','Despesas por Grupo'],
+            ['atrasos','Contas a Receber por Faixa de Atraso'],
+            ['ranking','Ranking de Clientes e Processos'],['equipe','Resultado por Advogado e Centro de Custo']];
+async function relatorios(qual){
+  const q=qual||'dre';
+  el('tSub').textContent='Relatórios do ano de referência, calculados na planilha';
+  el('view').innerHTML='<div class="box"><div class="bar"><strong>Relatório</strong>'+
+    '<select id="selRel">'+RELS.map(r=>'<option value="'+r[0]+'"'+(r[0]===q?' selected':'')+'>'+r[1]+'</option>').join('')+
+    '</select>'+btnRef('Atualizar relatório')+'</div><div class="scroll" id="relBox"><div class="load">Gerando…</div></div></div>';
+  el('selRel').onchange=e=>relatorios(e.target.value);
+  try{
+    const m=await srv('getRelatorio',q);
+    const linhas=m.filter(r=>r.join('').trim()!=='');
+    el('relBox').innerHTML='<table>'+linhas.map((r,i)=>{
+      const t=i===0?'th':'td';
+      return '<tr>'+r.map((c,j)=>'<'+t+(j>0?' class="num"':'')+'>'+esc(c)+'</'+t+'>').join('')+'</tr>';
+    }).join('')+'</table>';
+  }catch(e){erro(e);}
+}
+
+function erro(e){
+  const msg=(e&&e.message)?e.message:String(e);
+  el('view').innerHTML='<div class="aviso" style="border-left-color:#A32020">'+
+    '<b>Não foi possível concluir a operação.</b><br>'+esc(msg)+
+    '<br><br>Verifique se os nomes das abas da planilha não foram alterados.</div>';
+  toast('Erro: '+msg,true);
+}
+
+/* ============ INÍCIO ============ */
+(async function(){
+  montaMenu();
+  el('selMes').innerHTML=MESES.map((m,i)=>'<option value="'+(i+1)+'">'+m+'</option>').join('');
+  const hoje=new Date();
+  el('selAno').innerHTML=[-2,-1,0,1,2].map(d=>{const a=hoje.getFullYear()+d;
+    return '<option value="'+a+'">'+a+'</option>';}).join('');
+  try{
+    L=await srv('getListas');
+    el('selAno').value=L.ano||hoje.getFullYear();
+    el('selMes').value=L.mes||(hoje.getMonth()+1);
+    srv('getUrlPlanilha').then(u=>el('linkPlan').href=u).catch(()=>{});
+    el('btnPeriodo').onclick=()=>ir(ATUAL);
+    el('btnAtualizar').onclick=()=>atualizar();
+    el('tHora').textContent='Dados carregados às '+new Date().toLocaleTimeString('pt-BR');
+    ir('painel');
+  }catch(e){erro(e);}
+})();
+</script>
+</body>
+</html>
